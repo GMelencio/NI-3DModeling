@@ -1,0 +1,37 @@
+﻿<html>
+<head>
+    <style>
+        body{
+            font-family: 'Myriad Pro', Helvetica, Arial, 'Lucida Grande', sans-serif;
+            font-size: 24pt;
+            color: white;
+            background-color: #000000;
+        }
+
+        div.instructions {
+            font-size: 14pt;
+            color: gray;
+            text-align: center;
+        }
+
+        label {
+            position: fixed;
+            white-space: nowrap;
+        }
+    </style>
+    <!-- See more examples at developer.leapmotion.com -->
+    <title>2D Drawing with dots Demo</title>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/three.js/r66/three.js"></script>
+    <script src="http://js.leapmotion.com/leap-0.6.4.min.js"></script>
+    <script src="http://js.leapmotion.com/leap-plugins-0.1.10.min.js"></script>
+    <script src="http://js.leapmotion.com/leap.rigged-hand-0.1.5.min.js"></script>
+    <script src="SphereDrawingAlpha.js"></script>
+</head>
+
+<body>
+    <div class="instructions">Extend index fingerto draw dots, move hand out of field of view to clear</div>
+    <div id="fingercoords" class="instructions"></div>
+    <div id="spherecoords" class="instructions"></div>
+    <div id="labels"></div>
+</body>
+</html>

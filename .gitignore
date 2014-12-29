@@ -41,3 +41,16 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+ClientSideJSForLeap/Web.config
+ClientSideJSForLeap/Web.Debug.config
+ClientSideJSForLeap/Web.Release.config
+NI-3DModeling.sln
+ClientSideJSForLeap/Properties/AssemblyInfo.cs
+ClientSideJSForLeap/obj/Debug/ClientSideJSForLeap.dll
+ClientSideJSForLeap/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
+ClientSideJSForLeap/obj/Debug/TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs
+ClientSideJSForLeap/obj/Debug/TemporaryGeneratedFile_5937a670-0e60-4077-877b-f7221da3dda1.cs
+*.cs
+ClientSideJSForLeap/obj/Debug/ClientSideJSForLeap.csproj.FileListAbsolute.txt
+ClientSideJSForLeap/obj/Debug/ClientSideJSForLeap.csprojResolveAssemblyReference.cache
+*.pdb
