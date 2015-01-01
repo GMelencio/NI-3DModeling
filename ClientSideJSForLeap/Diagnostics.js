@@ -16,7 +16,7 @@ function CreateDiagnosticLabels(lines) {
     DiagnosticLabels = new Object();
     var count = lines * 2;
 
-    for (var i = 0; i < count/2; i++) {
+    for (var i = 0; i < lines; i++) {
         var label = new DiagnosticLabel(i, "", i + ":");
         label.div.style.position = 'absolute';
         label.div.style.top = ((i * 30) + 10) + 'px'
@@ -25,17 +25,21 @@ function CreateDiagnosticLabels(lines) {
         
         DiagnosticLabels["diagnosticLabel" + i] = label;
 
-        var label2 = new DiagnosticLabel(i + (count / 2), "", i + (count / 2) + ":");
+        var label2 = new DiagnosticLabel(i + lines, "", i + lines + ":");
         label2.div.style.position = 'absolute';
         label2.div.style.top = ((i * 30) + 10) + 'px'
         label2.div.style.left = (window.innerWidth / 2) + 50 + 'px'
         document.body.appendChild(label2.div);
-        DiagnosticLabels["diagnosticLabel" + i + (count / 2)] = label2;
+        DiagnosticLabels["diagnosticLabel" + i + lines] = label2;
     }
 }
 
 function GetLabel(labelNumber) {
     return DiagnosticLabels["diagnosticLabel" + labelNumber];
+}
+
+function UpdateLabelText(labelNumber, text) {
+    document.getElementById("diagnosticLabel" + labelNumber).innerText = text;
 }
 
 function DiagnosticLabel(labelId, initialText, prefixText) {
@@ -50,6 +54,6 @@ function DiagnosticLabel(labelId, initialText, prefixText) {
     }
 }
 
-function createDivForLabel() {
-
+function vectorToXYZString(position) {
+    return "X: " + position.x + " Y: " + position.y + " Z: " + position.z;
 }

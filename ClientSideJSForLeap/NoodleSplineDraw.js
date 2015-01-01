@@ -9,19 +9,12 @@
 /// <reference path="Diagnostics.js" />
 /// <reference path="SplineMaker.js" />
 
-var clock = new THREE.Clock();
-
-var drawPositions = [];
-
-var drawCounter = 0;
 var splineCurve;
 var drawnTubes = [];
 
 function TryDrawObject(handGesture) {
 
     if (handGesture.isInDrawMode) {
-        if (!clock.running)
-            clock.start();
 
         if (!splineCurve) {
             var drawPoint = handGesture.drawPoint;
@@ -30,7 +23,7 @@ function TryDrawObject(handGesture) {
             splineCurve.AddPoint(handGesture.drawPoint);
         }
 
-        GetLabel(1).updateText("Distance " + splineCurve.DistanceOfEnds());
+        UpdateLabelText(1, "Distance " + splineCurve.DistanceOfEnds());
     }
     else if (handGesture.isInClearMode) {
         function removeFromScene(object, number, array) {
@@ -51,6 +44,9 @@ function TryDrawObject(handGesture) {
             } else {
                 curve = splineCurve.curve;
             }
+
+            UpdateLabelText(2, "First point " + vectorToXYZString(splineCurve.pointDrawLog[0].position) + " drawn at " + splineCurve.pointDrawLog[0].timestamp);
+            UpdateLabelText(3, "Last point " + vectorToXYZString(splineCurve.pointDrawLog.last().position) + " drawn at " + splineCurve.pointDrawLog.last().timestamp);
 
             var tube = createTube(curve, 50, 3, 4, 1);
             scene.add(tube);

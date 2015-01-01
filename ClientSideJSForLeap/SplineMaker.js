@@ -1,12 +1,13 @@
 ﻿/// <reference path="DrawingHelper.js" />
 /// <reference path="Libs/THREEJS/three.js" />
-var splinePointsLength;
 
+//Custom object that encapsulates the functions needed for a SplineCurve3
 function AdaptiveSpline(points, targetScene, drawReductionFactor) {
     this.curve = new THREE.SplineCurve3(points);
     this.PointsContainer = [];
     this.drawnLines = [];
     this.pointDistances = [];
+    this.pointDrawLog = [];
     var drawCounter = 0;
     if (!drawReductionFactor)
         drawReductionFactor = 1;
@@ -15,7 +16,7 @@ function AdaptiveSpline(points, targetScene, drawReductionFactor) {
         drawCounter++;
 
         if ((drawCounter % drawReductionFactor) == 0) {
-            var point = addSplineObject(position);
+            var point = createSphere(position, 2, 2, 2, { color: 0x00ff00 });
             if (this.PointsContainer.last()) 
                 var line = drawLineBetweenPoints(this.PointsContainer.last().position, position);
             
@@ -25,6 +26,7 @@ function AdaptiveSpline(points, targetScene, drawReductionFactor) {
             targetScene.add(line);
             this.drawnLines.push(line);
             this.curve.points.push(position);
+            this.pointDrawLog.push(new PointWithTime(this.curve.points.last()));
             this.pointDistances.push(this.DistanceOfEnds());
         }
     };
@@ -39,6 +41,7 @@ function AdaptiveSpline(points, targetScene, drawReductionFactor) {
 
         this.drawnLines = [];
         var drawCounter = 0;
+        this.pointDrawLog = [];
         this.pointDistances = [];
     }
 
@@ -47,48 +50,6 @@ function AdaptiveSpline(points, targetScene, drawReductionFactor) {
         var lastPoint = this.curve.points.last();
         return lastPoint.distanceTo(firstPoint);
     }
-}
-
-function addSplineObject(position) {
-	var geometry = new THREE.SphereGeometry( 2, 2, 2 );
-	var material = new THREE.MeshLambertMaterial( { color: 0x00ff00 } );
-
-	var mesh = new THREE.Mesh( geometry, material );
-
-	mesh.material.ambient = mesh.material.color;
-
-	mesh.position.x = position.x;
-	mesh.position.y = position.y;
-	mesh.position.z = position.z;
-
-	mesh.castShadow = true;
-	mesh.receiveShadow = true;
-
-	return mesh;
-
-}
-
-
-function updateSplineOutline(splineCurve, targetScene) {
-
-	splineCurve.updateArcLengths();
-
-	var arcLen = splineCurve.getLength();
-
-	arcLen = Math.floor( arcLen / 8 );
-
-	var points = splineCurve.getPoints( arcLen );
-    
-	var geometry = new THREE.Geometry();
-
-	for (var i = 0; i < points.length; i++) {
-	    var vertex = new THREE.Vector3(points[i].x, points[i].y, points[i].z);
-	    geometry.vertices.push(vertex);
-	}
-
-	var splineOutline = new THREE.Line( geometry, new THREE.LineBasicMaterial( { color: 0x000000, opacity: 0.5 } ) );
-
-	targetScene.add(tubeMesh);
 }
 
 function drawLineBetweenPoints(startVect, endVect) {
