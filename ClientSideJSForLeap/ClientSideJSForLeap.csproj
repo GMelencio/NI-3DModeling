@@ -97,6 +97,7 @@
     <Content Include="Libs\THREEJS\three.js" />
     <Content Include="Libs\THREEJS\three.min.js" />
     <Content Include="LinePolygon.html" />
+    <Content Include="DrawingSimulator.html" />
     <Content Include="Main.html" />
     <Content Include="MovingCubeTest.js" />
     <Content Include="NoodleMaker.js" />

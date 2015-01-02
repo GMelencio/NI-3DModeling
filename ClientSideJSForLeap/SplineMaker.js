@@ -61,3 +61,26 @@ function drawLineBetweenPoints(startVect, endVect) {
     return new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: 0x000000, opacity: 0.5 }));
 }
 
+
+function smoothenSpline(baseSpline, divisions, recursionCount) {
+    baseSpline.updateArcLengths();
+    var arcLength = baseSpline.getLength();
+    var segments = Math.floor(arcLength / divisions);
+
+    var splinePoints = baseSpline.getPoints(segments);
+
+    var smoothSpline = new THREE.SplineCurve3();
+    for (var i = 1; i <= splinePoints.length; i = i + 2) {
+        if (splinePoints[i - 1] && splinePoints[i + 1]) {
+            var newXPos = (splinePoints[i - 1].x + splinePoints[i + 1].x) / 2;
+            var newYPos = (splinePoints[i - 1].y + splinePoints[i + 1].y) / 2;
+            var newZPos = (splinePoints[i - 1].z + splinePoints[i + 1].z) / 2;
+
+            var vertex = new THREE.Vector3(newXPos, newYPos, newZPos);
+            smoothSpline.points.push(vertex);
+        }
+    }
+
+     return smoothSpline;
+}
+

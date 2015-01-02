@@ -3,9 +3,9 @@
 var startVector = new THREE.Vector3(-100, -2, -100);
 var endVector = new THREE.Vector3(284, 100, -125);
 
-var X_NOISE = 25
-var Y_NOISE = 20
-var Z_NOISE = 15
+var X_NOISE = 45
+var Y_NOISE = 100
+var Z_NOISE = 75
 
 function RunSimulation() {
 

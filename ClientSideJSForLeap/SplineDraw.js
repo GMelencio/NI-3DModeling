@@ -7,6 +7,7 @@
 /// <reference path="Libs/Leap/leap.rigged-hand-0.1.5.js" />
 /// <reference path="Helpers.js" />
 /// <reference path="Diagnostics.js" />
+/// <reference path="DrawingHelper.js" />
 /// <reference path="SplineMaker.js" />
 
 var clock = new THREE.Clock();
@@ -52,9 +53,15 @@ function TryDrawObject(handGesture) {
                 curve = splineCurve.curve;
             }
             
-            var tube = createTube(curve, 50, 3, 4, 1);
+            var tube = createTube(curve, 0x7080d0, 50, 3, 4, 1);
+            //scene.addAndPushToArray(tube, drawnTubes)
             scene.add(tube);
             drawnTubes.push(tube);
+
+            //var smoothedTube = createTube(curve, 0x00fff0, 50, 3, 4, 1);
+            //scene.addAndPushToArray(smoothedTube, drawnTubes)
+            //scene.add(smoothedTube);
+            //drawnTubes.push(smoothedTube);
             destroySpline();
         }
     }

@@ -8,6 +8,7 @@
 /// <reference path="Helpers.js" />
 /// <reference path="Diagnostics.js" />
 /// <reference path="SplineMaker.js" />
+/// <reference path="NoodleMaker.js" />
 
 var splineCurve;
 var drawnTubes = [];
@@ -48,9 +49,16 @@ function TryDrawObject(handGesture) {
             UpdateLabelText(2, "First point " + vectorToXYZString(splineCurve.pointDrawLog[0].position) + " drawn at " + splineCurve.pointDrawLog[0].timestamp);
             UpdateLabelText(3, "Last point " + vectorToXYZString(splineCurve.pointDrawLog.last().position) + " drawn at " + splineCurve.pointDrawLog.last().timestamp);
 
-            var tube = createTube(curve, 50, 3, 4, 1);
-            scene.add(tube);
-            drawnTubes.push(tube);
+            var noodle = new Noodle(curve, 0x7080F0, 0.1);
+            scene.addAndPushToArray(noodle.tubeMesh, drawnTubes)
+
+            var smoothSpline = smoothenSpline(curve, 16);
+            //Have to do it this way because javascript did not like to do much recusion
+            for (var i = 0; i < 4; i++){
+                smoothSpline = smoothenSpline(smoothSpline, 16);
+            }
+            var noodle2 = new Noodle(smoothSpline, 0xFF0000, 0.8)
+            scene.addAndPushToArray(noodle2.tubeMesh, drawnTubes)
             destroySpline();
         }
     }

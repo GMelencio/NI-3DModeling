@@ -22,6 +22,12 @@ if (!Array.prototype.last) {
     };
 };
 
+if (!THREE.Scene.prototype.addAndPushToArray) {
+    THREE.Scene.prototype.addAndPushToArray = function (object, array) {
+        this.add(object);
+        array.push(object);
+    }
+}
 
 //Creates a 3D object as a marker for the points
 function createSphere(position, radius, widthSegments, heightSegments, meshParams) {
