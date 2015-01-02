@@ -37,35 +37,29 @@ function TryDrawObject(handGesture) {
     else {
         //TODO: add tolerances to prevent stop drawing if it was only momentary (i.e. bad read)
         if (splineCurve) {
-            //mergeSpheresFromSpline(splineCurve, scene);
-            var curve = null;
-            var closeSplineAtIndex = splineToBeClosed(splineCurve.pointDistances);
-            if (closeSplineAtIndex) {
-                curve = new THREE.ClosedSplineCurve3(splineCurve.curve.points.slice(0, closeSplineAtIndex));
-            } else {
-                curve = splineCurve.curve;
-            }
+         
+            var noodle = drawNoodleFromSpline(splineCurve, 0x708090, 0.8, splineToBeClosed);
+            scene.addAndPushToArray(noodle.tubeMesh, drawnTubes);
 
-            UpdateLabelText(2, "First point " + vectorToXYZString(splineCurve.pointDrawLog[0].position) + " drawn at " + splineCurve.pointDrawLog[0].timestamp);
-            UpdateLabelText(3, "Last point " + vectorToXYZString(splineCurve.pointDrawLog.last().position) + " drawn at " + splineCurve.pointDrawLog.last().timestamp);
-
-            var noodle = new Noodle(curve, 0x7080F0, 0.1);
-            scene.addAndPushToArray(noodle.tubeMesh, drawnTubes)
-
-            var smoothSpline = smoothenSpline(curve, 16);
-            //Have to do it this way because javascript did not like to do much recusion
-            for (var i = 0; i < 4; i++){
-                smoothSpline = smoothenSpline(smoothSpline, 16);
-            }
-            var noodle2 = new Noodle(smoothSpline, 0xFF0000, 0.8)
-            scene.addAndPushToArray(noodle2.tubeMesh, drawnTubes)
+            var smoothedNoodle = drawNoodleFromSpline(splineCurve, 0xFF0000, 0.1, splineToBeClosed, smoothenSpline);
+            scene.addAndPushToArray(smoothedNoodle.tubeMesh, drawnTubes);
             destroySpline();
         }
     }
 }
 
+function drawNoodleFromSpline(adaptiveSpline, color, opacity, closingFunction, smoothingFunction) {
+    var curve = closingFunction(adaptiveSpline);
 
-function splineToBeClosed(splinePointDistances) {
+    if (smoothingFunction)
+        curve = smoothingFunction(curve, 16, 4)
+
+    return new Noodle(curve, color, opacity);
+}
+
+function splineToBeClosed(adaptiveSpline) {
+    var splinePointDistances = adaptiveSpline.pointDistances;
+
     var max = splinePointDistances[Math.floor(splinePointDistances.length / 2)];
     var min = Math.min.apply(null, splinePointDistances);
 
@@ -82,10 +76,10 @@ function splineToBeClosed(splinePointDistances) {
             }
         }
 
-        return currentMinIndex;
+        return new THREE.ClosedSplineCurve3(adaptiveSpline.curve.points.slice(0, currentMinIndex));
     }
 
-    return null;
+    return adaptiveSpline.curve;
 }
 
 function destroySpline() {
