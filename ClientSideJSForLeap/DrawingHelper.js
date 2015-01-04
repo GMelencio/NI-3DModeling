@@ -6,6 +6,7 @@ function DrawRequest() {
     this.isInDrawMode = false;
     //Draw mode is defined as having only the pinky finger extended
     this.isInClearMode = false;
+    
     this.drawPoint = new THREE.Vector3(0, 0, 0);
 }
 
@@ -33,7 +34,6 @@ if (!THREE.Scene.prototype.addAndPushToArray) {
 function createSphere(position, radius, widthSegments, heightSegments, meshParams) {
     var geometry = new THREE.SphereGeometry(radius, widthSegments, heightSegments);
     var material = new THREE.MeshLambertMaterial(meshParams);
-
     var mesh = new THREE.Mesh(geometry, material);
 
     mesh.material.ambient = mesh.material.color;

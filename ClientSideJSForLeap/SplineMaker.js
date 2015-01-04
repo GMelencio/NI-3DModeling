@@ -76,16 +76,14 @@ function smoothenSpline(spline, divisions, recursionCount) {
         var splinePoints = baseSpline.getPoints(segments);
 
         var smoothSpline = new THREE.SplineCurve3();
-        for (var i = 1; i <= splinePoints.length; i = i + 2) {
+        for (var i = 1; i <= splinePoints.length; i++) {
             if (splinePoints[i - 1] && splinePoints[i + 1]) {
-                var newXPos = (splinePoints[i - 1].x + splinePoints[i + 1].x) / 2;
-                var newYPos = (splinePoints[i - 1].y + splinePoints[i + 1].y) / 2;
-                var newZPos = (splinePoints[i - 1].z + splinePoints[i + 1].z) / 2;
-
-                var vertex = new THREE.Vector3(newXPos, newYPos, newZPos);
+                var vertex = splinePoints[i - 1].add(splinePoints[i + 1]).divideScalar(2);
                 smoothSpline.points.push(vertex);
             }
         }
+
+        smoothSpline.points.push(splinePoints.last());
 
         baseSpline = smoothSpline;
     }

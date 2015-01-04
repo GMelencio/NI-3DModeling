@@ -1,7 +1,7 @@
 ﻿/// <reference path="Libs/THREEJS/three.js" />
 
-var startVector = new THREE.Vector3(-100, -2, -100);
-var endVector = new THREE.Vector3(284, 100, -125);
+var startVector = new THREE.Vector3(-200, -30, -15);
+var endVector = new THREE.Vector3(250, 100, -15);
 
 var X_NOISE = 45
 var Y_NOISE = 100

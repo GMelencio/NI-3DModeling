@@ -12,38 +12,131 @@
 
 var splineCurve;
 var drawnTubes = [];
+var pinchSpheres = [];
+var drawRawNoodles = true;
+var drawSmoothedNoodles = false;
+var selectedTube = null;
+
+function PinchSphere(position, radius, persistCount) {
+    var numFramesAlive = persistCount;
+    this.sphere = createSphere(position, radius, 8, 8, { color: 0x00ff00, opacity: 0.2, transparent: true});
+
+    this.updateToRemove = function () {
+        numFramesAlive--;
+        return (numFramesAlive <= 0);
+    }
+}
+
+function SelectedTube(tube) {
+    this.oldColor = tube.children[0].material.color;
+    tube.children[0].material.color.setHex(0xdf0000);
+    this.mesh = tube;
+
+    this.revertToUnselected = function () {
+        this.mesh.children[0].material.color.setHex(0x708090);
+    }
+}
+
+var prevPalmPosition = null;
+var prevPalmNormal = null;
 
 function TryDrawObject(handGesture) {
+    pinchSpheres.forEach(removePinchSpheresFromScene);
+    UpdateLabelText(2, "");
 
-    if (handGesture.isInDrawMode) {
+    if (handGesture.isPinching) {
+        if (!selectedTube) {
+            var pinchBall = new PinchSphere(handGesture.pinchSpace.pinchCenter, 3, 45);
+            pinchSpheres.push(pinchBall);
+            scene.add(pinchBall.sphere);
 
-        if (!splineCurve) {
-            var drawPoint = handGesture.drawPoint;
-            splineCurve = new AdaptiveSpline([drawPoint], scene, 5);
-        } else {
-            splineCurve.AddPoint(handGesture.drawPoint);
+            var p1 = handGesture.pinchSpace.pincherPosition;
+            var p2 = handGesture.pinchSpace.thumbPosition;
+
+            var dir = new THREE.Vector3();
+            dir.sub(p1, p2).normalize();
+
+            var raycaster = new THREE.Raycaster(p2, dir, 0, handGesture.pinchSpace.pinchRadius * 40);
+
+
+            drawnTubes.forEach(
+                function (tube, number, array) {
+                    var intersection = raycaster.intersectObject(tube, true);
+                    if (intersection.length > 0) {
+                        selectedTube = new SelectedTube(tube);
+                        UpdateLabelText(2, "Tube Intersected at " + handGesture.pinchSpace.pinchCenter);
+                    }
+                }
+            );
+        }
+        else {
+            if (prevPalmPosition && prevPalmNormal) {
+                selectedTube.mesh.translateX(handGesture.palmPosition[0] - prevPalmPosition[0]);
+                selectedTube.mesh.translateY(handGesture.palmPosition[1] - prevPalmPosition[1]);
+                selectedTube.mesh.translateZ(handGesture.palmPosition[2] - prevPalmPosition[2]);
+                
+                
+            }
         }
 
-        UpdateLabelText(1, "Distance " + splineCurve.DistanceOfEnds());
-    }
-    else if (handGesture.isInClearMode) {
-        function removeFromScene(object, number, array) {
-            scene.remove(object);
-        }
-
-        drawnTubes.forEach(removeFromScene);
-        drawnTubes = [];
+        prevPalmPosition = handGesture.palmPosition;
+        prevPalmNormal = handGesture.palmNormal;
     }
     else {
-        //TODO: add tolerances to prevent stop drawing if it was only momentary (i.e. bad read)
-        if (splineCurve) {
-         
-            var noodle = drawNoodleFromSpline(splineCurve, 0x708090, 0.8, splineToBeClosed);
-            scene.addAndPushToArray(noodle.tubeMesh, drawnTubes);
+        if (selectedTube) {
+            selectedTube.revertToUnselected();
+            selectedTube = null;
+        }
 
-            var smoothedNoodle = drawNoodleFromSpline(splineCurve, 0xFF0000, 0.1, splineToBeClosed, smoothenSpline);
-            scene.addAndPushToArray(smoothedNoodle.tubeMesh, drawnTubes);
-            destroySpline();
+        if (handGesture.isInDrawMode) {
+
+            //HACK: Compensating for how Leap does not seem to be accurately scaling the depth of the gesture
+            handGesture.drawPoint.z = handGesture.drawPoint.z * 1.5;
+
+            if (!splineCurve) {
+                var drawPoint = handGesture.drawPoint;
+                splineCurve = new AdaptiveSpline([drawPoint], scene, 5);
+            } else {
+                splineCurve.AddPoint(handGesture.drawPoint);
+            }
+
+            UpdateLabelText(1, "Distance " + splineCurve.DistanceOfEnds());
+        }
+        else if (handGesture.isInClearMode) {
+            function removeFromScene(object, number, array) {
+                scene.remove(object);
+            }
+
+            drawnTubes.forEach(removeFromScene);
+            drawnTubes = [];
+        }
+        else {
+            //TODO: add tolerances to prevent stop drawing if it was only momentary (i.e. bad read)
+            if (splineCurve) {
+
+                if (drawRawNoodles) {
+                    var noodle = drawNoodleFromSpline(splineCurve, 0x708090, 0.9, splineToBeClosed);
+                    scene.addAndPushToArray(noodle.tubeMesh, drawnTubes);
+                }
+
+                if (drawSmoothedNoodles) {
+                    var smoothedNoodle = drawNoodleFromSpline(splineCurve, 0xFF0000, 0.6, splineToBeClosed, smoothenSpline);
+                    scene.addAndPushToArray(smoothedNoodle.tubeMesh, drawnTubes);
+                }
+                destroySpline();
+            }
+        }
+    }
+}
+
+
+
+function removePinchSpheresFromScene(pinchSphere, number, array) {
+    if (pinchSphere) {
+        if (pinchSphere.updateToRemove()) {
+            scene.remove(pinchSphere.sphere);
+            var index = array.indexOf(pinchSphere);
+            array.splice(index, 1);
         }
     }
 }
@@ -52,12 +145,14 @@ function drawNoodleFromSpline(adaptiveSpline, color, opacity, closingFunction, s
     var curve = closingFunction(adaptiveSpline);
 
     if (smoothingFunction)
-        curve = smoothingFunction(curve, 16, 4)
+        curve = smoothingFunction(curve, 24, 2)
 
     return new Noodle(curve, color, opacity);
 }
 
-function splineToBeClosed(adaptiveSpline) {
+function splineToBeClosed(adaptiveSpline, testPointsFromEnd) {
+    testPointsFromEnd = !testPointsFromEnd ? 10 : testPointsFromEnd;
+
     var splinePointDistances = adaptiveSpline.pointDistances;
 
     var max = splinePointDistances[Math.floor(splinePointDistances.length / 2)];
@@ -66,7 +161,7 @@ function splineToBeClosed(adaptiveSpline) {
     if (max > splinePointDistances.last()) {
         var currentMin = max;
         var currentMinIndex = splinePointDistances.length - 1;
-        for (var i = splinePointDistances.length; i >= splinePointDistances.length - 10; i--) {
+        for (var i = splinePointDistances.length; i >= splinePointDistances.length - testPointsFromEnd; i--) {
             if (splinePointDistances[i]) {
                 var lower = Math.min(currentMin, splinePointDistances[i]);
                 if (lower < currentMin) {

@@ -34,7 +34,8 @@ function createTubeMesh(extrudePath, tubeColor, tubeOpacity, segments, radius, r
     var tubeMesh = THREE.SceneUtils.createMultiMaterialObject(geometry, [
         new THREE.MeshLambertMaterial({
             color: tubeColor,
-            opacity: tubeOpacity
+            opacity: tubeOpacity,
+            transparent: true
         }),
         new THREE.MeshBasicMaterial({
             color: 0x000000,
