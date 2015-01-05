@@ -44,7 +44,6 @@ function createTubeMesh(extrudePath, tubeColor, tubeOpacity, segments, radius, r
             transparent: true
         })]);
     tubeMesh.scale.set(scale, scale, scale)
-
     return tubeMesh;
 }
 

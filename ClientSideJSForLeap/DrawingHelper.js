@@ -71,3 +71,7 @@ function updateCoordsLabel(elementid, message) {
     var coordslabel = document.getElementById(elementid);
     coordslabel.innerHTML = message;
 }
+
+function makeVector(threePartArray) {
+    return new THREE.Vector3(threePartArray[0], threePartArray[1], threePartArray[2]);
+}

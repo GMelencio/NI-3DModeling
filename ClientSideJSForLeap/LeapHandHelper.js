@@ -15,7 +15,7 @@ function getExtendedFingers(hand) {
     return extendedFingers;
 }
 
-function HandGesture(hand) {
+function HandGesture(hand, ibox) {
     var extendedFingers = getExtendedFingers(hand);
 
     this.isInDrawMode = extendedFingers.length == 2 && (hand.indexFinger.extended && hand.middleFinger.extended);
@@ -26,6 +26,9 @@ function HandGesture(hand) {
 
         //var worldPos = handMesh.getWorldPosition();
         this.drawPoint = handMesh.fingers[1].tip.getWorldPosition();
+
+        //var leapPointInWorld = leapPointToWorld(hand.indexFinger.tipPosition, ibox);
+        //this.drawPoint = makeVector(leapPointInWorld);
     }
 
     this.isPinching = !this.isInDrawMode && hand.pinchStrength > 0.9
@@ -33,6 +36,9 @@ function HandGesture(hand) {
 
     this.palmPosition = hand.palmPosition;
     this.palmNormal = hand.palmNormal;
+    this.pitch = hand.pitch();
+    this.yaw = hand.yaw();
+    this.roll = hand.roll();
 
 }
 HandGesture.prototype = new DrawRequest();
@@ -67,3 +73,17 @@ function PinchSpace(hand) {
     }
 }
 
+function leapPointToWorld(leapPoint, iBox) {
+    var normalized = iBox.normalizePoint(leapPoint, false);
+    var z = normalized[2];
+    // if changing from right-hand to left-hand rule, use:
+    //var z = normalized[2] * -1.0;
+    //recenter origin
+    var x = normalized[0] + 0.5;
+    z += 0.5;
+    //scale
+    x *= 100;
+    var y = normalized[1] * 100;
+    z *= 100;
+    return Leap.vec3.fromValues(x, y, z);
+}

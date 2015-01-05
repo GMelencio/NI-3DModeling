@@ -39,6 +39,14 @@ function SelectedTube(tube) {
 
 var prevPalmPosition = null;
 var prevPalmNormal = null;
+var prevPalmPitch = null;
+var prevPalmYaw = null;
+var prevPalmRoll = null;
+var enableRoll = true;
+var enablePitch = true;
+var enableYaw = true;
+
+var clearGestureEnabled = false;
 
 function TryDrawObject(handGesture) {
     pinchSpheres.forEach(removePinchSpheresFromScene);
@@ -70,17 +78,38 @@ function TryDrawObject(handGesture) {
             );
         }
         else {
-            if (prevPalmPosition && prevPalmNormal) {
+            if (prevPalmPosition) {
                 selectedTube.mesh.translateX(handGesture.palmPosition[0] - prevPalmPosition[0]);
                 selectedTube.mesh.translateY(handGesture.palmPosition[1] - prevPalmPosition[1]);
                 selectedTube.mesh.translateZ(handGesture.palmPosition[2] - prevPalmPosition[2]);
-                
-                
+            }
+
+            //if (prevPalmNormal) {
+            //    //selectedTube.mesh.quaternion.setFromUnitVectors(makeVector(prevPalmNormal), makeVector(handGesture.palmNormal));
+            //    //selectedTube.mesh.rotation.fromArray(handGesture.palmNormal);
+            //}
+
+            if (prevPalmPitch && enablePitch) {
+                var delta1 = prevPalmPitch - handGesture.pitch;
+                selectedTube.mesh.rotateZ(delta1);
+            }
+
+            if (prevPalmYaw && enableYaw) {
+                var delta2 = prevPalmYaw - handGesture.yaw;
+                selectedTube.mesh.rotateX(delta2);
+            }
+
+            if (prevPalmRoll && enableRoll) {
+                var delta3 = prevPalmRoll - handGesture.roll;
+                selectedTube.mesh.rotateY(delta3);
             }
         }
 
         prevPalmPosition = handGesture.palmPosition;
         prevPalmNormal = handGesture.palmNormal;
+        prevPalmPitch = handGesture.pitch;
+        prevPalmYaw = handGesture.yaw;
+        prevPalmRoll = handGesture.roll;
     }
     else {
         if (selectedTube) {
@@ -102,11 +131,11 @@ function TryDrawObject(handGesture) {
 
             UpdateLabelText(1, "Distance " + splineCurve.DistanceOfEnds());
         }
-        else if (handGesture.isInClearMode) {
+        else if (handGesture.isInClearMode && clearGestureEnabled) {
             function removeFromScene(object, number, array) {
                 scene.remove(object);
             }
-
+            
             drawnTubes.forEach(removeFromScene);
             drawnTubes = [];
         }
@@ -116,11 +145,13 @@ function TryDrawObject(handGesture) {
 
                 if (drawRawNoodles) {
                     var noodle = drawNoodleFromSpline(splineCurve, 0x708090, 0.9, splineToBeClosed);
+                    noodle.tubeMesh.useQuaternion = true;
                     scene.addAndPushToArray(noodle.tubeMesh, drawnTubes);
                 }
 
                 if (drawSmoothedNoodles) {
                     var smoothedNoodle = drawNoodleFromSpline(splineCurve, 0xFF0000, 0.6, splineToBeClosed, smoothenSpline);
+                    smoothedNoodle.tubeMesh.useQuaternion = true;
                     scene.addAndPushToArray(smoothedNoodle.tubeMesh, drawnTubes);
                 }
                 destroySpline();
@@ -128,8 +159,6 @@ function TryDrawObject(handGesture) {
         }
     }
 }
-
-
 
 function removePinchSpheresFromScene(pinchSphere, number, array) {
     if (pinchSphere) {

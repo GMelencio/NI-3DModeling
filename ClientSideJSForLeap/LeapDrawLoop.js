@@ -4,15 +4,22 @@
 /// <reference path="Libs/Leap/leap-widgets-0.1.0.js" />
 /// <reference path="Libs/Leap/leap.rigged-hand-0.1.5.js" />
 
+var ibox;
 var riggedHandPlugin;
 //Leap loop to call drawing functions
 Leap.loop(
   function (frame) {
-      
+      ibox = frame.interactionBox;
       frame.hands.forEach(
         function (hand) {
-            var handGesture = new HandGesture(hand);
-            TryDrawObject(handGesture);
+            if (hand.type == "right") {
+                var handGesture = new HandGesture(hand, ibox);
+                TryDrawObject(handGesture);
+            }
+            else if (hand.type == "left") {
+                var handMesh = hand.data('riggedHand.mesh');
+
+            }
         }
    )
   }
@@ -21,3 +28,5 @@ Leap.loop(
 .use('handEntry')
 
 riggedHandPlugin = Leap.loopController.plugins.riggedHand;
+
+//var prevTexture
