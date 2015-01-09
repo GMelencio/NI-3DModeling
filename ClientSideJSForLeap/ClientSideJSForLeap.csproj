@@ -65,19 +65,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="BasicBoxDraw.js" />
-    <Content Include="BoxKalmanDraw.js" />
-    <Content Include="Diagnostics.js" />
-    <Content Include="DrawingHelper.js" />
-    <Content Include="KalmanDraw.js" />
-    <Content Include="KalmanFilter2D.js" />
-    <Content Include="KalmanFilter3D.js" />
-    <Content Include="KalmanSylvester\KalmanModel.js" />
-    <Content Include="KalmanSylvester\KalmanSylvester.js" />
-    <Content Include="KalmanSylvester\sylvester.src.js" />
-    <Content Include="KalmanSylvester\test.html" />
-    <Content Include="LeapDrawLoop.js" />
-    <Content Include="LeapHandHelper.js" />
+    <Content Include="Scripts\Diagnostics.js" />
+    <Content Include="Scripts\DrawingHelper.js" />
+    <Content Include="Scripts\LeapDrawLoop.js" />
+    <Content Include="Scripts\LeapHandHelper.js" />
     <Content Include="Libs\jquery-2.1.3.min.js" />
     <Content Include="Libs\Leap\leap-0.6.4.js" />
     <Content Include="Libs\Leap\leap-0.6.4.min.js" />
@@ -99,15 +90,15 @@
     <Content Include="LinePolygon.html" />
     <Content Include="DrawingSimulator.html" />
     <Content Include="Main.html" />
-    <Content Include="MovingCubeTest.js" />
-    <Content Include="NoodleMaker.js" />
-    <Content Include="NoodleSplineDraw.js" />
-    <Content Include="SceneSetup.js" />
+    <Content Include="Scripts\NoodleMaker.js" />
+    <Content Include="Scripts\NoodleSplineDraw.js" />
+    <Content Include="Scripts\SceneSetup.js" />
     <Content Include="Scripts\references.js" />
-    <Content Include="Simulator.js" />
-    <Content Include="SplineDraw.js" />
-    <Content Include="SplineMaker.js" />
-    <Content Include="StoneSpace.css" />
+    <Content Include="Scripts\Simulator.js" />
+    <Content Include="SphereDrawTest.html" />
+    <Content Include="Scripts\SplineDraw.js" />
+    <Content Include="Scripts\SplineMaker.js" />
+    <Content Include="Styles\StoneSpace.css" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
