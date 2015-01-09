@@ -55,3 +55,6 @@ ClientSideJSForLeap/obj/Debug/ClientSideJSForLeap.csproj.FileListAbsolute.txt
 ClientSideJSForLeap/obj/Debug/ClientSideJSForLeap.csprojResolveAssemblyReference.cache
 *.pdb
 NI-3DModeling.v12.suo
+*.dll
+ClientSideJSForLeap/ClientSideJSForLeap.csproj
+ClientSideJSForLeap/ClientSideJSForLeap.csproj.user
