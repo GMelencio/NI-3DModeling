@@ -6,12 +6,15 @@ var randomConesToCreate = 15; // Make global
 var createLightingForScene = true; // Make global
 //make stats optional 
 
+var sceneArea = 200;
+
 initScene();
 render();
 
 function initScene() {
-    camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 1, 1000);
-    camera.position.z = 200;
+    camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, sceneArea / 100,
+      sceneArea * 4);
+    camera.position.z = sceneArea;
 
     controls = new THREE.OrbitControls(camera);
     controls.damping = 0.2;
@@ -36,6 +39,11 @@ function initScene() {
     container.appendChild(renderer.domElement);
 
     //window.addEventListener('resize', onWindowResize, false);
+}
+
+function getCurrentSceneArea() {
+    //TODO: allow for this to change based on user input through menu?
+    return sceneArea;
 }
 
 function createSceneLighting(targetScene) {

@@ -22,17 +22,11 @@ function HandGesture(hand, ibox) {
     this.isInClearMode = extendedFingers.length == 1 && hand.pinky.extended;
 
     if (this.isInDrawMode) {
-        var handMesh = hand.data('riggedHand.mesh');
-
-        //var worldPos = handMesh.getWorldPosition();
-        this.drawPoint = handMesh.fingers[1].tip.getWorldPosition();
-
-        //var leapPointInWorld = leapPointToWorld(hand.indexFinger.tipPosition, ibox);
-        //this.drawPoint = makeVector(leapPointInWorld);
+        this.drawPoint = convertLeapPointToScene(hand.indexFinger.tipPosition, ibox);
     }
 
     this.isPinching = !this.isInDrawMode && hand.pinchStrength > 0.9
-    this.pinchSpace = new PinchSpace(hand);
+    this.pinchSpace = new PinchSpace(hand, ibox);
 
     this.palmPosition = hand.palmPosition;
     this.palmNormal = hand.palmNormal;
@@ -44,7 +38,7 @@ function HandGesture(hand, ibox) {
 HandGesture.prototype = new DrawRequest();
 
 
-function PinchSpace(hand) {
+function PinchSpace(hand, ibox) {
     this.pincherPosition = new THREE.Vector3(0, 0, 0);
     this.thumbPosition = new THREE.Vector3(0, 0, 0);
     this.pinchCenter = new THREE.Vector3(0, 0, 0);
@@ -64,26 +58,28 @@ function PinchSpace(hand) {
             }
         }
 
-        var handMesh = hand.data('riggedHand.mesh');
-        this.pincherPosition = handMesh.fingers[pincherIndex].tip.getWorldPosition();
-        this.thumbPosition = handMesh.fingers[0].tip.getWorldPosition();
+        this.pincherPosition = convertLeapPointToScene(hand.fingers[pincherIndex].tipPosition, ibox);
+        this.thumbPosition = convertLeapPointToScene(hand.fingers[0].tipPosition, ibox);
 
         this.pinchCenter = this.pincherPosition.add(this.thumbPosition).divideScalar(2);
         this.pinchRadius = this.thumbPosition.distanceTo(this.pincherPosition);
     }
 }
 
-function leapPointToWorld(leapPoint, iBox) {
-    var normalized = iBox.normalizePoint(leapPoint, false);
-    var z = normalized[2];
-    // if changing from right-hand to left-hand rule, use:
-    //var z = normalized[2] * -1.0;
-    //recenter origin
-    var x = normalized[0] + 0.5;
-    z += 0.5;
-    //scale
-    x *= 100;
-    var y = normalized[1] * 100;
-    z *= 100;
-    return Leap.vec3.fromValues(x, y, z);
+function convertLeapPointToScene(position, ibox) {
+
+    var x, y, z
+    var coords = [x, y, z];
+    coords.forEach(function (current, index, sourceArray) {
+        current = position[index] - ibox.center[index];
+        current /= ibox.size[index];
+        current *= getCurrentSceneArea(); //TODO: Change this, do not use global variable
+        sourceArray[index] = current;
+    });
+
+
+    coords[2] -= getCurrentSceneArea();
+
+    return new THREE.Vector3(coords[0], coords[1], coords[2]);
 }
+
