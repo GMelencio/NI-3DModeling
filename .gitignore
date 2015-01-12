@@ -55,3 +55,15 @@ ClientSideJSForLeap/obj/Debug/ClientSideJSForLeap.csproj.FileListAbsolute.txt
 ClientSideJSForLeap/obj/Debug/ClientSideJSForLeap.csprojResolveAssemblyReference.cache
 *.pdb
 NI-3DModeling.v12.suo
+ClientSideJSForLeap/RiggedHandDots/Leapjs-Rigged-Hand.html
+*.dll
+ClientSideJSForLeap/bin/ClientSideJSForLeap.dll.config
+ClientSideJSForLeap/RiggedHandDots/Leapjs-Rigged-Hand_files/advanced.js
+ClientSideJSForLeap/RiggedHandDots/Leapjs-Rigged-Hand_files/analytics.js
+ClientSideJSForLeap/RiggedHandDots/Leapjs-Rigged-Hand_files/leap-0.6.0.js
+ClientSideJSForLeap/RiggedHandDots/Leapjs-Rigged-Hand_files/leap-plugins-0.1.6.js
+ClientSideJSForLeap/RiggedHandDots/Leapjs-Rigged-Hand_files/leap.rigged-hand-0.1.4.js
+ClientSideJSForLeap/RiggedHandDots/Leapjs-Rigged-Hand_files/leap.transform.js
+ClientSideJSForLeap/RiggedHandDots/Leapjs-Rigged-Hand_files/Stats.js
+ClientSideJSForLeap/RiggedHandDots/Leapjs-Rigged-Hand_files/three.min.js
+ClientSideJSForLeap/RiggedHandDots/Leapjs-Rigged-Hand_files/TrackballControls.js

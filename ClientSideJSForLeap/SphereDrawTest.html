@@ -14,6 +14,7 @@
     <script src="http://js.leapmotion.com/leap-0.6.4.js"></script>
     <script src="http://js.leapmotion.com/leap-plugins-0.1.10.js"></script>
     <script src="http://js.leapmotion.com/leap.rigged-hand-0.1.5.js"></script>
+    <script src="Scripts/Diagnostics.js"></script>
 
     <script>
         var renderer, scene, camera, riggedHandPlugin, fadingSpheres
@@ -87,12 +88,18 @@
         //Leap loop to call drawing functions
         Leap.loop(
           function (frame) {
+              //var interactionBox = frame.interactionBox;
               frame.hands.forEach(
                 function (hand) {
                     var handMesh = hand.data('riggedHand.mesh');
 
                     function createSphereAtFingerTip(fingerIndex, colorHex) {
-                        new FadingSphere(handMesh.fingers[fingerIndex].tip.getWorldPosition(), 3, colorHex);
+                        //var position = handMesh.fingers[fingerIndex].tip.getWorldPosition();
+                        //var position = hand.fingers[fingerIndex].tipPosition.getWorldPosition()
+
+                        handMesh.scenePosition()
+                        var position = getPositionInWorld(hand.fingers[fingerIndex].tipPosition, frame.interactionBox);
+                        new FadingSphere(position, 3, colorHex);
                     }
 
                     createSphereAtFingerTip(0, 0xF57E20) //Thumb
@@ -111,6 +118,26 @@
 
         initScene();
         render();
+
+        function getPositionInWorld(leapPoint, iBox) {
+            var normalized = iBox.normalizePoint(leapPoint, true);
+            var halfWidth = window.innerWidth / 2
+            var xCoord = (halfWidth * normalized[0]) - halfWidth;
+            var yCoord = 0//window.innerHeight * (1 - normalized[1]);
+            var zCoord = 0;//window.innerWidth * normalized[2];
+            //var z = normalized[2];
+            //// if changing from right-hand to left-hand rule, use:
+            ////var z = normalized[2] * -1.0;
+            ////recenter origin
+            //var x = normalized[0] + 0.5;
+            //z += 0.5;
+            ////scale
+            //x *= 100;
+            //var y = normalized[1] * 100;
+            //z *= 100;
+            return new THREE.Vector3(xCoord, yCoord, zCoord);
+            //return Leap.vec3.fromValues(xCoord, yCoord, zCoord);
+        }
     </script>
 </body>
 </html>
