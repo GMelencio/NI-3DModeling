@@ -8,8 +8,8 @@
 
     <script src="http://code.jquery.com/jquery-2.1.1.js"></script>
     <script src="http://threejs.org/build/three.min.js"></script>
-    <script src="http://threejs.org/examples/js/controls/OrbitControls.js"></script>
-    <script src="http://threejs.org/examples/js/Detector.js"></script>
+    <script src="http://threejs.org/examples/js/controls/orbitcontrols.js"></script>
+    <script src="http://threejs.org/examples/js/detector.js"></script>
     <script src="http://threejs.org/examples/js/libs/stats.min.js"></script>
     <script src="http://js.leapmotion.com/leap-0.6.4.js"></script>
     <script src="http://js.leapmotion.com/leap-plugins-0.1.10.js"></script>
@@ -53,7 +53,7 @@
 
         function FadingSphere(position, size, meshColor) {
             //Draw the sphere at the position of the indexfinger tip position
-            var geometry = new THREE.SphereGeometry(3, 8, 8);
+            var geometry = new THREE.SphereGeometry(6, 8, 8);
             var material = new THREE.MeshLambertMaterial({ color: meshColor});
 
             var mesh = new THREE.Mesh(geometry, material);
@@ -97,6 +97,10 @@
 
                     function createSphereAtFingerTip(fingerIndex, colorHex) {
                         var position = convertLeapPointToScene(hand.fingers[fingerIndex].tipPosition, interactionBox);
+                        //var basicDotMesh = new THREE.Mesh(new THREE.IcosahedronGeometry(.3, 1), new THREE.MeshNormalMaterial());
+                        //scene.add(basicDotMesh);
+                        //var offset = new THREE.Vector3(0, -10, 0);
+                        //var position = getScenePositionFromLeap(hand.fingers[fingerIndex].tipPosition, handMesh, basicDotMesh.position, offset);
                         new FadingSphere(position, 3, colorHex);
                     }
 
@@ -124,13 +128,50 @@
                 current = position[index] - ibox.center[index];
                 current /= ibox.size[index];
                 current *= sceneArea; //TODO: Change this, do not use global variable
+                current -= sceneArea; //sourceArray[index]
                 sourceArray[index] = current;
             });
 
-            coords[2] -= sceneArea;
+            coords[0] += window.innerWidth / 9.5;
+            coords[1] += window.innerHeight / 3.7;
+            //coords[2] -= sceneArea;
+            //coords[2] -= sceneArea;
 
             return new THREE.Vector3(coords[0], coords[1], coords[2]);
         }
+
+        if (!THREE.Vector3.prototype.fromLeap) {
+            THREE.Vector3.prototype.fromLeap = function (array, scale, offset) {
+                return this.fromArray(array).divideScalar(scale).add(offset || scope.offset);
+            };
+        }
+
+        var projector = new THREE.Projector();
+
+        function getScreenPosition(position) {
+            //var camera, height, screenPosition, width;
+            //camera = scope.camera;
+            var height, screenPosition, width;
+            console.assert(camera instanceof THREE.Camera, "screenPosition expects camera, got", camera);
+            width = scope.renderer.domElement.width;
+            height = scope.renderer.domElement.height;
+            console.assert(width && height);
+            screenPosition = new THREE.Vector3();
+            if (position instanceof THREE.Vector3) {
+                screenPosition.fromLeap(position.toArray(), this.leapScale);
+            } else {
+                screenPosition.fromLeap(position, this.leapScale).sub(this.positionRaw).add(this.position);
+            }
+            screenPosition = projector.projectVector(screenPosition, camera);
+            screenPosition.x = (screenPosition.x * width / 2) + width / 2;
+            screenPosition.y = (screenPosition.y * height / 2) + height / 2;
+            console.assert(!isNaN(screenPosition.x) && !isNaN(screenPosition.x), 'x/y screen position invalid');
+            return screenPosition;
+        };
+
+        function getScenePositionFromLeap(leapPosition, handMesh, scenePosition, offset) {
+            return scenePosition.fromLeap(leapPosition, handMesh.leapScale, offset).sub(handMesh.positionRaw).add(handMesh.position);
+        };
     </script>
 </body>
 </html>
