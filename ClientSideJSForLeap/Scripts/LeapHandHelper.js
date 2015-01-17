@@ -22,7 +22,8 @@ function HandGesture(hand, ibox) {
     this.isInClearMode = extendedFingers.length == 1 && hand.pinky.extended;
 
     if (this.isInDrawMode) {
-        this.drawPoint = convertLeapPointToScene(hand.indexFinger.tipPosition, ibox);
+        this.drawPoint = (new THREE.Vector3()).fromArray(hand.fingers[1].tipPosition); 
+        //this.drawPoint = convertLeapPointToScene(hand.indexFinger.tipPosition, ibox);
     }
 
     this.isPinching = !this.isInDrawMode && hand.pinchStrength > 0.9
@@ -58,8 +59,10 @@ function PinchSpace(hand, ibox) {
             }
         }
 
-        this.pincherPosition = convertLeapPointToScene(hand.fingers[pincherIndex].tipPosition, ibox);
-        this.thumbPosition = convertLeapPointToScene(hand.fingers[0].tipPosition, ibox);
+        this.pincherPosition = (new THREE.Vector3()).fromArray(hand.fingers[pincherIndex].tipPosition);
+            //convertLeapPointToScene(hand.fingers[pincherIndex].tipPosition, ibox);
+        this.thumbPosition = (new THREE.Vector3()).fromArray(hand.fingers[pincherIndex].tipPosition);
+            //convertLeapPointToScene(hand.fingers[0].tipPosition, ibox);
 
         this.pinchCenter = this.pincherPosition.add(this.thumbPosition).divideScalar(2);
         this.pinchRadius = this.thumbPosition.distanceTo(this.pincherPosition);

@@ -6,12 +6,13 @@ var randomConesToCreate = 15; // Make global
 var createLightingForScene = true; // Make global
 //make stats optional 
 
+var sceneLights, sceneFog;
+
 var sceneArea = 200;
 
-initScene();
 render();
 
-function initScene() {
+function initScene(basisScene) {
     camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, sceneArea / 100,
       sceneArea * 4);
     camera.position.z = sceneArea;
@@ -20,7 +21,7 @@ function initScene() {
     controls.damping = 0.2;
     controls.addEventListener('change', render);
 
-    scene = new THREE.Scene();
+    scene = basisScene;
     scene.fog = new THREE.FogExp2(0xcccccc, 0.002);
 
     // Create the cones to provide perspective
@@ -41,22 +42,35 @@ function initScene() {
     //window.addEventListener('resize', onWindowResize, false);
 }
 
+function AddFogAndLighting(targetScene) {
+    targetScene.fog = sceneFog = new THREE.FogExp2(0xcccccc, 0.002);
+
+    if (createLightingForScene)
+        createSceneLighting(targetScene);
+}
+
 function getCurrentSceneArea() {
     //TODO: allow for this to change based on user input through menu?
     return sceneArea;
 }
 
 function createSceneLighting(targetScene) {
+    if (!sceneLights)
+        sceneLights = []
+
     light = new THREE.DirectionalLight(0xffffff);
     light.position.set(1, 1, 1);
     targetScene.add(light);
+    sceneLights.push(light);
 
     light = new THREE.DirectionalLight(0x002288);
     light.position.set(-1, -1, -1);
     targetScene.add(light);
+    sceneLights.push(light);
 
     light = new THREE.AmbientLight(0x222222);
     targetScene.add(light);
+    sceneLights.push(light);
 }
 
 function createRandomCones(coneCount, targetScene) {
@@ -76,6 +90,6 @@ function createRandomCones(coneCount, targetScene) {
 
 function render() {
     requestAnimationFrame(render);
-    renderer.render(scene, camera);
+    //renderer.render(scene, camera);
     //stats.update();
 }

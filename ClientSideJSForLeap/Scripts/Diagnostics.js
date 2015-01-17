@@ -8,7 +8,7 @@ function ShowStatsElement() {
     stats.domElement.style.position = 'absolute';
     stats.domElement.style.top = (window.innerHeight - 50) + 'px';
     stats.domElement.style.zIndex = 100;
-    container.appendChild(stats.domElement);
+    //container.appendChild(stats.domElement);
 }
 
 function CreateDiagnosticLabels(lines) {

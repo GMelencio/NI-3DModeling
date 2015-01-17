@@ -29,4 +29,23 @@ Leap.loop(
 
 riggedHandPlugin = Leap.loopController.plugins.riggedHand;
 
+Leap.loopController.on('frame', function (frame) {
+    var hand;
+
+    if (!scene)
+        initScene(riggedHandPlugin.parent);
+
+    if (!sceneFog)
+        AddFogAndLighting(riggedHandPlugin.parent);
+});
+
+Leap.loopController.use('boneHand', {
+    renderer: riggedHandPlugin.renderer,
+    scene: riggedHandPlugin.parent,
+    camera: riggedHandPlugin.camera,
+    render: function () { }
+})
+
+
+
 //var prevTexture
